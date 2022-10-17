@@ -7,8 +7,22 @@ function getTotalAccountsCount(accounts) {
 }
 
 function getBooksBorrowedCount(books) {
+  /*
   let checkedOut = books.filter((book) => book.borrows[0].returned == false);
   return checkedOut.length;
+*/
+
+  //
+  let initialValue = 0;
+  let checkedOut = books.reduce((acc, cur) => {
+    if (acc[cur.borrows[0].returned]) {
+      acc[cur.borrows[0].returned]++;
+    } else {
+      acc[cur.borrows[0].returned] = 1;
+    }
+    return acc;
+  }, {});
+  return checkedOut.false;
 }
 
 /*
@@ -37,44 +51,34 @@ then.. go throug genre array and increase count >> add to topGenres
 
 */
 
+// HELPER FUNCTION
+function sortByTopNumber(arrayList, topNumber) {
+  return arrayList
+    .sort((itemA, itemB) => itemB.count - itemA.count)
+    .slice(0, topNumber);
+}
+
 function getMostCommonGenres(books) {
-  let topGenresList = [];
-  let listOfGenres = [];
-  let tempBook = { name: "", count: 0 };
-  let name = "";
-  let tempCount = 0;
+  let initialValue = 0;
+  let genres = books.reduce((acc, cur) => {
+    if (acc[cur.genre]) {
+      acc[cur.genre]++;
+    } else {
+      acc[cur.genre] = 1;
+    }
+    return acc;
+  }, {});
 
-  // GET LIST OF GENRES IN TOTAL
-  for (let i = 0; i < books.length; i++) {
-    let genre = books[i].genre;
-    for (let j = 0; j < listOfGenres.length; j++) {
-      //goes through the topGenres list
-      if (listOfGenres[j] == genre) {
-        // checks if yes genre matches topGenre
-        j = listOfGenres.length;
-        genre = ""; // then end the topGenre loop and reset genre
-        break; // get out of topGenre if statement
-      }
-    }
-    if (genre) {
-      listOfGenres.push(genre);
-    }
+  let finalGenreList = [];
+  let placeI = 0;
+  for (let genreName in genres) {
+    finalGenreList[placeI] = { name: genreName, count: genres[genreName] };
+    placeI++;
   }
 
-  // FILTER list of genres based on loop of arrays >> add to new array
-  for (let k = 0; k < listOfGenres.length; k++) {
-    let tempArrayForCount = books.filter(
-      (book) => listOfGenres[k] == book.genre
-    );
-    tempCount = tempArrayForCount.length;
-    //tempBook = { name: listOfGenres[k], count: tempCount };
-    topGenresList.push({ name: listOfGenres[k], count: tempCount });
-  }
-
-  // HOW TO GET THE TOP 5....
-  topGenresList = topGenresList.sort((a, b) => b.count - a.count).slice(0, 5);
-
-  return topGenresList;
+  // USE OF HELPER FUNCTION!
+  finalGenreList = sortByTopNumber(finalGenreList, 5);
+  return finalGenreList;
 }
 
 /*
@@ -96,15 +100,15 @@ function getMostPopularBooks(books) {
   let mostBorrowed = [];
 
   // GO THROUGH BOOK ARRAY AND GATHER DATA >> PUSH NEW OBJECT IN NEW ARRAY
-  for (let i = 0; i < books.length; i++) {
-    let title = books[i].title;
-    let borrowCount = books[i].borrows.length;
+  for (let placeI = 0; placeI < books.length; placeI++) {
+    let title = books[placeI].title;
+    let borrowCount = books[placeI].borrows.length;
     mostBorrowed.push({ name: title, count: borrowCount });
   }
 
   // HOW TO GET THE TOP 5....
-  mostBorrowed = mostBorrowed.sort((a, b) => b.count - a.count).slice(0, 5);
-
+  // USE OF HELPER FUNCTION!
+  mostBorrowed = sortByTopNumber(mostBorrowed, 5);
   return mostBorrowed;
 }
 
@@ -128,23 +132,23 @@ steps:
 function getMostPopularAuthors(books, authors) {
   let topFiveAuthors = [];
 
-  for (let i = 0; i < authors.length; i++) {
+  for (let placeI = 0; placeI < authors.length; placeI++) {
     let totalChecks = 0;
-    for (let j = 0; j < books.length; j++) {
-      if (authors[i].id == books[j].authorId) {
-        let numberBorrowed = books[j].borrows.length;
+    for (let placeJ = 0; placeJ < books.length; placeJ++) {
+      if (authors[placeI].id == books[placeJ].authorId) {
+        let numberBorrowed = books[placeJ].borrows.length;
         totalChecks += numberBorrowed;
       }
     }
     topFiveAuthors.push({
-      name: authors[i].name.first + " " + authors[i].name.last,
+      name: authors[placeI].name.first + " " + authors[placeI].name.last,
       count: totalChecks,
     });
   }
 
-  return (topFiveAuthors = topFiveAuthors
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5));
+  // USE OF HELPER FUNCTION!
+  topFiveAuthors = sortByTopNumber(topFiveAuthors, 5);
+  return topFiveAuthors;
 }
 
 module.exports = {

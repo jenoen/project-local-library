@@ -19,18 +19,19 @@ function partitionBooksByBorrowedStatus(books) {
 }
 
 function getBorrowersForBook(book, accounts) {
-  let borrowerList = [];
-  let personID = "";
-
-  for (let i = 0; i < book.borrows.length; i++) {
-    personID = book.borrows[i].id;
-    let person = accounts.find((account) => account.id == personID);
-    person = { ...person, returned: book.borrows[i].returned };
-    borrowerList.push(person);
+  let borrowerList = book.borrows.map((borrowed) => borrowed.id); // rewrites/maps a new array to show only book.borrows array of ids
+  for (let placeI = 0; placeI < borrowerList.length; placeI++) {
+    // as go through borrowerList.. check against accounts array >> keep person object
+    let person = accounts.find((account) => account.id == borrowerList[placeI]);
+    borrowerList[placeI] = {
+      // replace borrowerList item with person object/updated
+      ...person,
+      returned: book.borrows[placeI].returned,
+    };
   }
 
   let newList = borrowerList.slice(0, 10);
- return newList;
+  return newList;
 }
 
 module.exports = {

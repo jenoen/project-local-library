@@ -13,10 +13,10 @@ function sortAccountsByLastName(accounts) {
 function getTotalNumberOfBorrows(account, books) {
   let count = 0;
 
-  for (let i = 0; i < books.length; i++) {
-    let chosenBook = books[i];
-    for (let j = 0; j < chosenBook.borrows.length; j++) {
-      let borrowedBy = chosenBook.borrows[j];
+  for (let placeI = 0; placeI < books.length; placeI++) {
+    let chosenBook = books[placeI];
+    for (let placeJ = 0; placeJ < chosenBook.borrows.length; placeJ++) {
+      let borrowedBy = chosenBook.borrows[placeJ];
       if (borrowedBy.id == account.id) {
         count++;
       }
@@ -44,17 +44,23 @@ function getBooksPossessedByAccount(account, books, authors) {
 
   let checkedOut = books.filter((book) => book.borrows[0].id == accountId);
 
-  for (let i = 0; i < checkedOut.length; i++) {
-    let theAuthorId = checkedOut[i].authorId;
-    for (let j = 0; j < authors.length; j++) {
-      if (theAuthorId == authors[j].id) {
-        checkedOut[i] = { ...checkedOut[i], author: authors[j] };
-        j = authors.length;
+  for (let placeI = 0; placeI < checkedOut.length; placeI++) {
+    let theAuthorId = checkedOut[placeI].authorId;
+    for (let placeJ = 0; placeJ < authors.length; placeJ++) {
+      if (theAuthorId == authors[placeJ].id) {
+        checkedOut[placeI] = { ...checkedOut[placeI], author: authors[placeJ] };
+        placeJ = authors.length;
       }
     }
   }
 
   return checkedOut;
+
+  ///
+
+
+
+
 }
 
 module.exports = {
